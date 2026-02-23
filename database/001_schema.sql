@@ -14,7 +14,9 @@
 -- Habilitar extensões necessárias
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";    -- Para gerar UUIDs
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";     -- Para criptografia
-CREATE EXTENSION IF NOT EXISTS "vector";       -- Para embeddings de IA (busca semântica)
+-- NOTA: "vector" (pgvector) deve ser ativado manualmente no Supabase Dashboard
+-- Database → Extensions → procurar "vector" → ativar
+-- Depois execute o arquivo 003_add_vectors.sql para adicionar os campos de embedding
 
 
 -- ===========================================
@@ -133,9 +135,8 @@ CREATE TABLE IF NOT EXISTS public.knowledge_base (
   processed_content   TEXT,
   content_metadata    JSONB,
 
-  -- Embeddings para busca semântica com IA
-  -- O vetor tem 1536 dimensões (padrão do modelo text-embedding-ada-002 da OpenAI)
-  vector_embeddings   VECTOR(1536),
+  -- NOTA: vector_embeddings será adicionado via 003_add_vectors.sql
+  -- após ativar a extensão pgvector no Supabase Dashboard
   tokens_count        INTEGER,
 
   -- Status de processamento
@@ -150,10 +151,7 @@ CREATE TABLE IF NOT EXISTS public.knowledge_base (
   auto_sync           BOOLEAN DEFAULT FALSE NOT NULL
 );
 
--- Index para busca vetorial (necessário para similarity search)
-CREATE INDEX IF NOT EXISTS idx_knowledge_base_embeddings
-  ON public.knowledge_base USING ivfflat (vector_embeddings vector_cosine_ops)
-  WITH (lists = 100);
+-- Index vetorial será criado no 003_add_vectors.sql (requer pgvector ativo)
 
 CREATE INDEX IF NOT EXISTS idx_knowledge_base_agent_id ON public.knowledge_base(agent_id);
 CREATE INDEX IF NOT EXISTS idx_knowledge_base_user_id ON public.knowledge_base(user_id);

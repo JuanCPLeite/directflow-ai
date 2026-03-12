@@ -1,72 +1,61 @@
-# DirectFlow AI v3.0
+# InstaFlow AI
 
-Plataforma SaaS completa para automação de atendimento no Instagram usando Inteligência Artificial.
+Rebuild greenfield da plataforma SaaS de automação de Instagram com agentes de IA, CRM, inbox, analytics, flows e billing. A implementação atual segue os artefatos em `docs/` e o workflow em `.planning/`, não a shell antiga do projeto.
 
-## Stack
+## Fonte de verdade
 
-- **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui
-- **Backend:** Supabase (PostgreSQL + Auth + Edge Functions + Storage + pgvector)
-- **Estado:** Zustand
-- **Rotas:** React Router v6
-- **Formulários:** React Hook Form + Zod
-- **Gráficos:** Recharts
-- **Animações:** Framer Motion
+- Produto: `docs/PRODUTO.md`
+- Features: `docs/FEATURES.md`
+- Arquitetura: `docs/ARCHITECTURE.md`
+- Banco: `docs/SCHEMA.md`
+- Roadmap de execução: `.planning/ROADMAP.md`
 
-## Pré-requisitos
+## Estado atual
 
-- Node.js 18+
-- Conta no [Supabase](https://supabase.com)
+O repositório está em **Phase 1: Foundation and Platform Setup**. Nesta etapa a base antiga está sendo removida para abrir caminho a uma estrutura nova, alinhada ao roadmap completo.
 
-## Instalação
+## Stack base
+
+- Frontend: React + TypeScript + Vite + Tailwind CSS
+- Backend: Supabase (Auth, Postgres, Storage, Realtime, Edge Functions)
+- Estado local: Zustand
+- Rotas: React Router
+- Formulários: React Hook Form + Zod
+
+## Rodando localmente
 
 ```bash
-# Clonar o repositório
-git clone https://github.com/JuanCPLeite/directflow-ai.git
-cd directflow-ai
-
-# Instalar dependências
 npm install
-
-# Configurar variáveis de ambiente
-cp .env.example .env
-# Edite o .env com suas credenciais do Supabase
-
-# Configurar banco de dados
-# Execute os arquivos em /database na ordem:
-# 1. database/001_schema.sql
-# 2. database/002_rls_policies.sql
-
-# Iniciar servidor de desenvolvimento
-npm run dev
+npm run dev -- --port 8081
 ```
 
-## Banco de Dados
+App local: `http://localhost:8081`
 
-Arquivos em `/database/`:
+## Variáveis de ambiente
 
-| Arquivo | Descrição |
-|---------|-----------|
-| `001_schema.sql` | Tabelas, indexes, triggers |
-| `002_rls_policies.sql` | Políticas de segurança (RLS) |
+Use `.env.example` como contrato inicial e copie para `.env.local`.
 
-## Módulos
+Frontend:
 
-| # | Módulo | Status |
-|---|--------|--------|
-| 1 | Autenticação (login, registro) | ✅ Implementado |
-| 2 | Dashboard com métricas | 🔄 Em desenvolvimento |
-| 3 | Agentes de IA + Base de Conhecimento | 📋 Planejado |
-| 4 | CRM + Kanban + Tags | 📋 Planejado |
-| 5 | Keywords + Auto-input | 📋 Planejado |
-| 6 | Editor Visual de Fluxos | 📋 Planejado |
-| 7 | Broadcasts e Campanhas | 📋 Planejado |
-| 8 | Analytics e Relatórios | 📋 Planejado |
-| 9 | Live Chat + Caixa de Entrada | 📋 Planejado |
-| 10 | Pagamentos + Integrações | 📋 Planejado |
-| 11 | Equipe + Gamificação | 📋 Planejado |
+- `VITE_APP_NAME`
+- `VITE_APP_URL`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `VITE_META_APP_ID`
+- `VITE_STRIPE_PUBLISHABLE_KEY`
+- `VITE_SENTRY_DSN`
 
-## Histórico de Versões
+Secrets server-side ficam fora do frontend e serão usados nas fases de Edge Functions e integrações.
 
-| Versão | Data | Descrição |
-|--------|------|-----------|
-| 0.1.0 | 2026-02-23 | Setup inicial: React + TypeScript + Supabase + Auth |
+## Pastas preservadas
+
+- `docs/` mantém o desenho original e detalhado do produto
+- `documentos_originais/` permanece intacta
+- `.planning/` guarda o fluxo GSD, requisitos e roadmap executável
+- `database/` e `src/types/database.ts` ficam como referência de domínio/Supabase
+
+## GitHub
+
+Remote atual:
+
+- `origin` → `https://github.com/JuanCPLeite/directflow-ai.git`

@@ -69,7 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_profiles_instagram_username ON public.profiles(in
 -- Agentes de IA configurados pelos usuários
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.agents (
-  id                              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                         UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at                      TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at                      TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -117,7 +117,7 @@ CREATE INDEX IF NOT EXISTS idx_agents_user_id ON public.agents(user_id);
 -- Documentos e fontes de conhecimento dos agentes
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.knowledge_base (
-  id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id             UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   agent_id            UUID NOT NULL REFERENCES public.agents(id) ON DELETE CASCADE,
   created_at          TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -162,7 +162,7 @@ CREATE INDEX IF NOT EXISTS idx_knowledge_base_user_id ON public.knowledge_base(u
 -- Etapas do funil de vendas (colunas do Kanban)
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.pipeline_stages (
-  id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id             UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at          TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at          TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -189,7 +189,7 @@ CREATE INDEX IF NOT EXISTS idx_pipeline_stages_user_id ON public.pipeline_stages
 -- Contatos e leads do CRM
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.leads (
-  id                        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                   UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at                TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at                TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -250,7 +250,7 @@ CREATE INDEX IF NOT EXISTS idx_leads_last_interaction ON public.leads(last_inter
 -- Etiquetas para organizar leads
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.tags (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL,
 
@@ -285,7 +285,7 @@ CREATE INDEX IF NOT EXISTS idx_lead_tags_tag_id ON public.lead_tags(tag_id);
 -- Fluxos de automação visuais (estilo Manychat)
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.flows (
-  id                        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                   UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at                TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at                TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -325,7 +325,7 @@ CREATE INDEX IF NOT EXISTS idx_flows_is_template ON public.flows(is_template) WH
 -- Palavras-chave para automação de respostas
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.keywords (
-  id                        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                   UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at                TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at                TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -375,7 +375,7 @@ CREATE INDEX IF NOT EXISTS idx_keywords_active ON public.keywords(user_id, is_ac
 -- Conversas (agrupam mensagens)
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.conversations (
-  id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                 UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   lead_id                 UUID NOT NULL REFERENCES public.leads(id) ON DELETE CASCADE,
   agent_id                UUID REFERENCES public.agents(id) ON DELETE SET NULL,
@@ -415,7 +415,7 @@ CREATE INDEX IF NOT EXISTS idx_conversations_started_at ON public.conversations(
 -- Mensagens individuais dentro de conversas
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.messages (
-  id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   conversation_id         UUID NOT NULL REFERENCES public.conversations(id) ON DELETE CASCADE,
   created_at              TIMESTAMPTZ DEFAULT NOW() NOT NULL,
 
@@ -450,7 +450,7 @@ CREATE INDEX IF NOT EXISTS idx_messages_unread ON public.messages(conversation_i
 -- Campanhas de mensagens em massa
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.broadcasts (
-  id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id                 UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at              TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   scheduled_at            TIMESTAMPTZ,
@@ -508,7 +508,7 @@ CREATE INDEX IF NOT EXISTS idx_broadcasts_scheduled ON public.broadcasts(schedul
 -- Integrações com sistemas externos
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.integrations (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id           UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at        TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at        TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -538,7 +538,7 @@ CREATE INDEX IF NOT EXISTS idx_integrations_user_id ON public.integrations(user_
 -- Registro de todos os eventos para analytics
 -- ===========================================
 CREATE TABLE IF NOT EXISTS public.analytics_events (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id           UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at        TIMESTAMPTZ DEFAULT NOW() NOT NULL,
 
@@ -664,3 +664,4 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER trigger_create_default_pipeline
   AFTER INSERT ON public.profiles
   FOR EACH ROW EXECUTE FUNCTION public.create_default_pipeline_stages();
+

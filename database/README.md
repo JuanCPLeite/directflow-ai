@@ -1,43 +1,56 @@
-# DirectFlow AI — Banco de Dados
+# InstaFlow AI — Banco de Dados
 
-## Estrutura de Arquivos
+## Estratégia atual
 
-```
+O projeto agora usa duas camadas:
+
+1. **Bootstrap**
+   Arquivo único para subir um banco novo do zero.
+2. **Migrations**
+   Alterações incrementais para evolução futura ou reconciliação de ambientes parcialmente aplicados.
+
+Isso evita rerodar o schema inteiro sempre que houver uma mudança.
+
+## Estrutura
+
+```text
 database/
-├── 001_schema.sql        → Tabelas, indexes e triggers
-├── 002_rls_policies.sql  → Políticas de segurança (RLS)
-└── README.md             → Este arquivo
+├── 001_schema.sql
+├── 002_rls_policies.sql
+├── 003_add_vectors.sql
+├── 004_schema_from_docs.sql
+├── migrations/
+│   ├── README.md
+│   └── 005_reconcile_partial_bootstrap.sql
+└── README.md
 ```
 
-## Como executar
+## Quando usar cada arquivo
 
-1. Acesse [supabase.com](https://supabase.com) e abra seu projeto
-2. Vá em **SQL Editor** (menu lateral)
-3. Execute os arquivos **na ordem numerada**:
-   - Primeiro: `001_schema.sql`
-   - Depois: `002_rls_policies.sql`
+### Banco novo
 
-## Tabelas criadas
+Use:
 
-| # | Tabela | Descrição |
-|---|--------|-----------|
-| 1 | `profiles` | Perfis de usuário (complementa auth.users) |
-| 2 | `agents` | Agentes de IA configurados |
-| 3 | `knowledge_base` | Documentos e fontes de conhecimento |
-| 4 | `pipeline_stages` | Etapas do funil Kanban |
-| 5 | `leads` | Contatos e leads do CRM |
-| 6 | `tags` | Etiquetas para organizar leads |
-| 7 | `lead_tags` | Relação N:N leads ↔ tags |
-| 8 | `flows` | Fluxos de automação visuais |
-| 9 | `keywords` | Palavras-chave para auto-respostas |
-| 10 | `conversations` | Histórico de conversas |
-| 11 | `messages` | Mensagens individuais |
-| 12 | `broadcasts` | Campanhas em massa |
-| 13 | `integrations` | Integrações externas |
-| 14 | `analytics_events` | Eventos para analytics |
+- `004_schema_from_docs.sql`
 
-## Histórico de Alterações
+Esse é o bootstrap derivado de `docs/SCHEMA.md` e ajustado para execução real no Supabase.
 
-| Versão | Data | Descrição |
-|--------|------|-----------|
-| 1.0.0 | 2026-02-23 | Schema inicial com 14 tabelas + RLS |
+### Banco parcialmente aplicado ou evolução futura
+
+Use arquivos em:
+
+- `database/migrations/`
+
+Esses scripts devem ser incrementais, seguros e focados em alterações específicas.
+
+## Recomendação operacional
+
+- Para ambiente novo: execute o bootstrap
+- Para ajustes futuros: crie uma migration nova
+- Para ambiente quebrado por execução parcial: aplique uma migration de reconciliação, não o bootstrap inteiro
+
+## Observações
+
+- `docs/SCHEMA.md` é documentação, não deve ser executado diretamente
+- Criptografia de tokens deve ser feita em código server-side ou Edge Functions, não no bootstrap inicial
+- Seeds e templates podem exigir tratamento separado em migrations conforme o ambiente evolui
